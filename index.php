@@ -1,5 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
+<?php
+// In secrets.php theres a simple array() with allowed remote_users
+if (in_array($_SERVER['REMOTE_USER'], $whitelist)) {
+?>
 
 <head>
     <meta charset="UTF-8">
@@ -48,4 +52,11 @@
         </section>
     </div>
 </body>
+
+<?php
+} else {
+    print("<br>Du har inte tillgång till anteckningarna, kontakta Dennis");
+}
+
+?>
 </html>
