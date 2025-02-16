@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <?php
+// Database connection settings and list of allowed users
+include "secrets.php";
 // In secrets.php theres a simple array() with allowed remote_users
 if (in_array($_SERVER['REMOTE_USER'], $whitelist)) {
 ?>
@@ -22,8 +24,6 @@ if (in_array($_SERVER['REMOTE_USER'], $whitelist)) {
     // Init empty php array
     $item_list = array();
 
-    // Database connection settings
-    include "secrets.php";
     // Connect to the MySQL database
     try {
         $db = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $username, $password);
