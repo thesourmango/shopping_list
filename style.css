@@ -1,0 +1,33 @@
+section {
+    font-family: Noto Sans;
+    font-size: x-large;
+    width: 100%;
+    max-width: 400px; /* Looks silly if notes are wider */
+    background: rgb(248, 255, 152);
+    border-radius: 3px;
+    filter: drop-shadow(-3px -3px 5px darkgray);
+    padding: 10px;
+    box-sizing: border-box; /* Otherwise padding 10px makes it 100% wide + padding */
+}
+.row {
+    display: flex;
+    padding: 5px 5px;
+}
+label {
+    flex: auto;  /* Widens the label, pushing the trash can to the right side of the note */
+    padding-left: 10px; /* Fixes too small gap because of checkbox zoom level */
+}
+span {
+    padding: 0px 5px;
+}
+input:not([type="text"]) {
+    transform: scale(1.5); /* Make checkboxes easier to hit on mobile */
+}
+input[type="text"] {
+    margin: 5px;
+    width: calc(100% - 10px);  /* Remove margin from width, otherwise textbox overflows */
+    box-sizing: border-box; /* Otherwise content padding makes it overflow */
+    font-size: inherit; /* Inherit means use same font as parent, aka section */
+    margin-top: 10px; /* Place some air between list items and input box */
+    border-radius: 5px; /* Overrides ugly border, matches better with built in checkbox styling */
+}
