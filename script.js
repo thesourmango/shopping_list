@@ -127,4 +127,16 @@ function track_list_items(){
     })
     //console.log(item_values) // debug, displays list before sending update to DB
     localStorage.setItem('item_list', JSON.stringify(item_values))
+    update_db(item_values)
+}
+
+/* Ajax function for updating items in db */
+async function update_db(item_values) {
+    fetch("./update.php", {
+        method: "POST",
+        headers: {"Content-type": "application/json; charset=UTF-8"},
+        body: JSON.stringify(item_values)
+    })
+    .then(response => response.json())
+    .then(json => console.log(json));
 }
