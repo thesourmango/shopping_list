@@ -1,3 +1,6 @@
+body {
+    overscroll-behavior: contain; /* Fix for pulling down items refreshing firefox */
+}
 section {
     font-family: Noto Sans;
     font-size: x-large;
@@ -18,14 +21,14 @@ label {
     padding-left: 10px; /* Fixes too small gap because of checkbox zoom level */
 }
 span {
-    padding: 0px 5px;
+    margin: 0px 7px;
 }
 input:not([type="text"]) {
     transform: scale(1.5); /* Make checkboxes easier to hit on mobile */
 }
 input[type="text"] {
     margin: 5px;
-    width: calc(100% - 10px);  /* Remove margin from width, otherwise textbox overflows */
+    width: calc(100% - 15px);  /* Remove margin from width, otherwise textbox overflows */
     box-sizing: border-box; /* Otherwise content padding makes it overflow */
     font-size: inherit; /* Inherit means use same font as parent, aka section */
     margin-top: 10px; /* Place some air between list items and input box */

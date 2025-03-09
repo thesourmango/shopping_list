@@ -31,42 +31,38 @@ function attach_trash_listeners() {
     })
 }
 
-/* Up & Down functionality */
-function item_up(element) {
-    let upperSibling = element.target.parentElement.previousElementSibling;
-    if(upperSibling === null) return;
-    upperSibling.insertAdjacentElement("beforebegin", element.target.parentElement);
-    track_list_items()
-}
-function item_down(element) {
-    let lowerSibling = element.target.parentElement.nextElementSibling;
-    if(lowerSibling === null) return;
-    lowerSibling.insertAdjacentElement("afterend", element.target.parentElement);
-    track_list_items()
+/* drag and drop functionality */
+function allowDrop(ev) {
+    ev.preventDefault();
 }
 
-function attach_updown_listeners() {
-    let up_icons = document.querySelectorAll(".up")
-    up_icons.forEach(up_icon => {
-        up_icon.addEventListener('click', item_up)
-    })
-    let down_icons = document.querySelectorAll(".down")
-    down_icons.forEach(down_icon => {
-        down_icon.addEventListener('click', item_down)
-    })
+function drag(ev) {
+    ev.dataTransfer.setData("text", ev.target.id);
+}
+
+function drop(ev) {
+    ev.preventDefault();
+    var data = ev.dataTransfer.getData("text");
+    // Don't allow dropping element on itself, nor on section (parent "visible" due to padding)
+    if (data != ev.target.parentElement.id && ev.target.parentElement.classList[0] == "row") {
+        ev.target.parentElement.insertAdjacentElement("afterend", document.getElementById(data));
+        track_list_items()
+    }
 }
 
 /* Checkbox functionality */
 var checkbox = document.querySelector("input[type=checkbox]")
 
 function check_item(e) {
-  if (e.target.checked) {
-    console.log("Checked for " + e.target.value)
-    track_list_items()
-  } else {
-    console.log("Unckecked for "+e.target.value)
-    track_list_items()
-  }
+    if (e.target.checked) {
+        //console.log("Checked for " + e.target.value)
+        document.querySelector('#new_item').insertAdjacentElement("afterend", e.target.parentElement); // Move item to bottom
+        track_list_items()
+    } else {
+        //console.log("Unckecked for " + e.target.value)
+        document.querySelector('#new_item').insertAdjacentElement("beforebegin", e.target.parentElement); // Move item to bottom
+        track_list_items()
+    }
 }
 
 function attach_check_listeners() {
@@ -76,54 +72,88 @@ function attach_check_listeners() {
     })
 }
 
+/* Edit functionality */
+function edit_item(element) {
+    let current_item = element.target.parentElement.querySelector("label")
+    current_item.setAttribute("contenteditable", "true") // Make label editable
+    // Focus caret (marker) to end of contenteditable element
+    current_item.focus()
+    let sel = window.getSelection();
+    sel.selectAllChildren(current_item);
+    sel.collapseToEnd();
+    // Preventdefault on Enter key and trigger edit completed followed by update to DB
+    current_item.addEventListener("keypress", stop_editing)
+}
+
+function stop_editing(ev) {
+    const current_item = ev.target // The current contenteditable element
+    if (ev.key === "Enter") {
+        ev.preventDefault();
+        current_item.setAttribute("contenteditable", "false") // Turn off contenteditable
+        current_item.parentElement.querySelector("input").value = current_item.innerText // Set checkbox value to input text
+        track_list_items() // Update localstorage item variable
+    }
+}
+
+function attach_edit_listeners() {
+    let edit_icons = document.querySelectorAll(".edit")
+    edit_icons.forEach(editable_item => {
+        editable_item.addEventListener('click', edit_item)
+    })
+}
 
 // Init all listeners
 attach_trash_listeners()
-attach_updown_listeners()
 attach_check_listeners()
+attach_edit_listeners()
 
 
 /* Add item functionality */
 function add_item(e) {
     let row = document.createElement("div")
     row.classList.add('row')
+    row.setAttribute("id", item_counter)
+    row.setAttribute("draggable", "true")
+    row.setAttribute("ondragstart", "drag(event)")
     // If user added item using enter key
     if (e.key === "Enter") {
-        item_counter++
-        row.innerHTML = '<input type="checkbox" id="' + item_counter + '" value="' + e.target.value + '"><label for="' + item_counter + '">' + e.target.value + '</label><span class="up">⬆️</span><span class="down">⬇️</span><span class="trash">❎</span><br>'
+        row.innerHTML = '<input type="checkbox" id="' + item_counter + '" value="' + e.target.value + '"><label for="' + item_counter + '">' + e.target.value + '</label><span class="edit">📝</span><span class="trash">❎</span><br>'
         document.querySelector("section").insertBefore(row, e.target)
         /* Reattach all event listeners - check https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver for better alternative */
         attach_trash_listeners()
-        attach_updown_listeners()
         attach_check_listeners()
+        attach_edit_listeners()
         track_list_items()
         e.target.value = ""
+        item_counter++
     }
     // When fetching list from localstorage
     else if (e.key == undefined) {
-        // console.log(e) // debug
-        item_counter++
+        // Add textbox. Do this first so checked/unchecked items can be placed below/above
+        document.querySelector("section").insertBefore(row, document.querySelector("#new_item"))
         // If saved list item has been checked
         if (e.checked == true) {
-            row.innerHTML = '<input type="checkbox" id="' + item_counter + '" value="' + e.item + '" checked><label for="' + item_counter + '">' + e.item + '</label><span class="up">⬆️</span><span class="down">⬇️</span><span class="trash">❎</span><br>'
+            row.innerHTML = '<input type="checkbox" id="' + item_counter + '" value="' + e.item + '" checked><label for="' + item_counter + '">' + e.item + '</label><span class="edit">📝</span><span class="trash">❎</span><br>'
+            document.querySelector('#new_item').insertAdjacentElement("afterend", row); // Place checked items below add new box
         }
         else {
-            row.innerHTML = '<input type="checkbox" id="' + item_counter + '" value="' + e.item + '"><label for="' + item_counter + '">' + e.item + '</label><span class="up">⬆️</span><span class="down">⬇️</span><span class="trash">❎</span><br>'
+            row.innerHTML = '<input type="checkbox" id="' + item_counter + '" value="' + e.item + '"><label for="' + item_counter + '">' + e.item + '</label><span class="edit">📝</span><span class="trash">❎</span><br>'
+            document.querySelector('#new_item').insertAdjacentElement("beforebegin", row); // Place unchecked items before input box
+
         }
-        document.querySelector("section").insertBefore(row,document.querySelector("#new_item"))
         attach_trash_listeners()
-        attach_updown_listeners()
+        item_counter++
     }
 }
 document.querySelector("#new_item").addEventListener("keypress", add_item)
 
 
 /* State management for localstorage */
-function track_list_items(){
+function track_list_items() {
     let item_values = [];
     let items = document.querySelectorAll('input:not([type="text"])')
     items.forEach(item => {
-        item_values.push({"item":item.value, "number":item.id, "checked":item.checked})
+        item_values.push({ "item": item.value, "number": item.id, "checked": item.checked })
     })
     //console.log(item_values) // debug, displays list before sending update to DB
     localStorage.setItem('item_list', JSON.stringify(item_values))
@@ -134,9 +164,9 @@ function track_list_items(){
 async function update_db(item_values) {
     fetch("./update.php", {
         method: "POST",
-        headers: {"Content-type": "application/json; charset=UTF-8"},
+        headers: { "Content-type": "application/json; charset=UTF-8" },
         body: JSON.stringify(item_values)
     })
-    .then(response => response.json())
-    .then(json => console.log(json));
+        .then(response => response.json())
+        .then(json => console.log(json));
 }

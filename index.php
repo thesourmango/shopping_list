@@ -12,6 +12,7 @@ if (in_array($_SERVER['REMOTE_USER'], $whitelist)) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Shopping list</title>
     <link rel="stylesheet" href="./style.css" />
+    <script src="drag-drop-touch.esm.min.js?autoload" type="module"></script>
     <script src="./script.js" defer></script>
     <link rel="apple-touch-icon" sizes="180x180" href="./favicon/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="./favicon/favicon-32x32.png">
@@ -47,7 +48,7 @@ if (in_array($_SERVER['REMOTE_USER'], $whitelist)) {
     
     ?>
     <div id="container">
-        <section>
+        <section ondragover="event.preventDefault()" ondrop="drop(event)">
             <input type="text" id="new_item" placeholder="Add item">
         </section>
     </div>
