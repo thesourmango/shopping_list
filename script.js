@@ -183,10 +183,42 @@ if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('/shop/service-worker.js')
       .then(registration => {
-        console.log('Service Worker registered:', registration);
+        console.log('Service Worker registered with scope:', registration.scope);
       })
       .catch(error => {
         console.log('Service Worker registration failed:', error);
       });
   });
 }
+
+/* Notification support coming soon 
+// Request Notification Permission
+document.getElementById('requestPermission').addEventListener('click', () => {
+    if ('Notification' in window) {
+        Notification.requestPermission().then(permission => {
+            if (permission === 'granted') {
+                console.log('Notification permission granted.');
+            } else {
+                console.log('Notification permission denied.');
+            }
+        });
+    } else {
+        console.log('This browser does not support notifications.');
+    }
+});
+
+// Send Test Notification
+document.getElementById('sendNotification').addEventListener('click', () => {
+    if ('Notification' in window && Notification.permission === 'granted') {
+        navigator.serviceWorker.ready.then(registration => {
+            registration.showNotification('Notes', {
+                body: 'Kolla köplistan!',
+            });
+        });
+    } else if ('Notification' in window && Notification.permission === 'denied') {
+        alert('Notification permission was denied. Please enable it in your browser settings.');
+    } else {
+        alert('Notifications are not supported or permission not granted.');
+    }
+});
+*/

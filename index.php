@@ -46,5 +46,10 @@ if (!$loginSuccessful) {
             <input type="text" id="new_item" placeholder="Add item">
         </section>
     </div>
+    <!-- Notification support coming soon
+    <h1>PWA Notification Test</h1>
+    <button id="requestPermission">Request Notification Permission</button>
+    <button id="sendNotification">Send Test Notification</button>
+-->
 </body>
 </html>
