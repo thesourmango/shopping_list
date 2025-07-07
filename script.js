@@ -1,24 +1,3 @@
-/* Service worker registration */
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/shop/service-worker.js')
-      .then(registration => {
-        console.log('Service Worker registered:', registration);
-      })
-      .catch(error => {
-        console.log('Service Worker registration failed:', error);
-      });
-  });
-}
-
-/* Refresh page when user returns focus to tab (reopens tab, swaps to open PWA) */
-// Source https://developer.mozilla.org/en-US/docs/Web/API/Document/visibilitychange_event
-document.addEventListener('visibilitychange', function() {
-  if (document.visibilityState === 'visible') {
-    location.reload();
-  }
-});
-
 /* Global item counter and item_values */
 let item_counter = 2
 
@@ -128,7 +107,6 @@ attach_trash_listeners()
 attach_check_listeners()
 attach_edit_listeners()
 
-
 /* Add item functionality */
 function add_item(e) {
     let row = document.createElement("div")
@@ -190,4 +168,25 @@ async function update_db(item_values) {
     })
         .then(response => response.json())
         .then(json => console.log(json));
+}
+
+/* Refresh page when user returns focus to tab (reopens tab, swaps to open PWA) */
+// Source https://developer.mozilla.org/en-US/docs/Web/API/Document/visibilitychange_event
+document.addEventListener('visibilitychange', function() {
+  if (document.visibilityState === 'visible') {
+    location.reload();
+  }
+});
+
+/* Service worker registration */
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/shop/service-worker.js')
+      .then(registration => {
+        console.log('Service Worker registered:', registration);
+      })
+      .catch(error => {
+        console.log('Service Worker registration failed:', error);
+      });
+  });
 }
