@@ -11,6 +11,14 @@ if ('serviceWorker' in navigator) {
   });
 }
 
+/* Refresh page when user returns focus to tab (reopens tab, swaps to open PWA) */
+// Source https://developer.mozilla.org/en-US/docs/Web/API/Document/visibilitychange_event
+document.addEventListener('visibilitychange', function() {
+  if (document.visibilityState === 'visible') {
+    location.reload();
+  }
+});
+
 /* Global item counter and item_values */
 let item_counter = 2
 
