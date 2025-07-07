@@ -1,11 +1,11 @@
 const CACHE_NAME = 'notekeeping-app-cache-v1';
 const urlsToCache = [
-  '/',
-  '/index.php',
-  '/style.css',
-  '/script.js',
-  '/favicon//android-chrome-192x192.png',
-  '/favicon//android-chrome-512x512.png'
+  '/shop/',
+  '/shop/index.php',
+  '/shop/style.css',
+  '/shop/script.js',
+  '/shop/favicon//android-chrome-192x192.png',
+  '/shop/favicon//android-chrome-512x512.png'
 ];
 
 self.addEventListener('install', event => {
